@@ -1,32 +1,55 @@
 from board import Board
-from bot import Bot;
+from randomBot import RandomBot;
+from minimaxBot import MinimaxBot
 from time import sleep
 import chess
 import os
+from random import choice
+from evaluate import evaluate
 
 def main():
+    bot1 = MinimaxBot(2)
+    bot2 = MinimaxBot(2)
+    
+    simulate(bot1, bot2, 1)
+
+def simulate(bot1, bot2, games):
+
     board = Board()
-    bot1 = Bot()
-    bot2 = Bot()
-    games = 100
-
-    simulate(bot1, bot2, board, games)
-
-def simulate(bot1, bot2, board, games):
 
     draws = 0
     white = 0
     black = 0
 
+    turn = choice((True, False))
+    startTurn = turn
+
+    # Set colors of bots to be able to evaluate the board
+    if (turn):
+        bot1.setColor(chess.WHITE)
+        bot2.setColor(chess.BLACK)
+    else:
+        bot1.setColor(chess.BLACK)
+        bot2.setColor(chess.WHITE)
+
     for _ in range(games):
-        while not board.isDraw():
+        while True:
+            evalB = evaluate(board, chess.BLACK)
+            evalW = evaluate(board, chess.WHITE)
+            boardP = board.toString()
             os.system('cls' if os.name == 'nt' else 'clear')
-            print("---------------\n" + board.toString() + "\n---------------")
-            if not bot1.makeMove(board):
+            print(f"Black: {bot1.name() if startTurn == False else bot2.name()}, Eval: {evalB}\n" + "---------------\n" + boardP + "\n---------------" + f"\nWhite: {bot2.name() if startTurn == False else bot1.name()}, Eval: {evalW}")
+
+            if board.isDraw():
                 break
-            if not bot2.makeMove(board):
-                break
-            #sleep(1.5)
+
+            if (turn):
+                bot1.makeMove(board)
+            else:
+                bot2.makeMove(board)
+
+            turn = not turn
+            sleep(1)
 
         outcome = board.outcome()
 
