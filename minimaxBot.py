@@ -14,19 +14,16 @@ class MinimaxBot():
             sys.exit("Need to set color.")
         
         maxEval = -math.inf
-        equalMoves = []
+        bestMove = None
 
         for move in board.getLegalMoves():
             curr = self.minimax(board.copy(), move, 1, True, -math.inf, math.inf)
 
             if curr > maxEval:
-                equalMoves.clear()
-                equalMoves.append(move)
+                bestMove = move
                 maxEval = curr
-            elif curr == maxEval:
-                equalMoves.append(move)
         
-        board.makeMove(choice(equalMoves))
+        board.makeMove(bestMove)
             
     def minimax(self, board, move, depth, maxPlayer, alpha, beta):
         board.makeMove(move)

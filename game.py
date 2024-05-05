@@ -4,12 +4,11 @@ from minimaxBot import MinimaxBot
 from time import sleep
 import chess
 import os
-from random import choice
 from evaluate import evaluate
 
 def main():
-    bot1 = MinimaxBot(2)
-    bot2 = MinimaxBot(2)
+    bot1 = MinimaxBot(3)
+    bot2 = RandomBot()
     
     simulate(bot1, bot2, 1)
 
@@ -21,27 +20,25 @@ def simulate(bot1, bot2, games):
     white = 0
     black = 0
 
-    turn = choice((True, False))
-    startTurn = turn
+    turn = True
 
     # Set colors of bots to be able to evaluate the board
-    if (turn):
-        bot1.setColor(chess.WHITE)
-        bot2.setColor(chess.BLACK)
-    else:
-        bot1.setColor(chess.BLACK)
-        bot2.setColor(chess.WHITE)
+    bot1.setColor(chess.WHITE)
+    bot2.setColor(chess.BLACK)
 
     for _ in range(games):
         while True:
+
             evalB = evaluate(board, chess.BLACK)
             evalW = evaluate(board, chess.WHITE)
             boardP = board.toString()
+
             os.system('cls' if os.name == 'nt' else 'clear')
-            print(f"Black: {bot1.name() if startTurn == False else bot2.name()}, Eval: {evalB}\n" + "---------------\n" + boardP + "\n---------------" + f"\nWhite: {bot2.name() if startTurn == False else bot1.name()}, Eval: {evalW}")
+            print(f"Black: {bot2.name()}, Eval: {evalB}\n" + "---------------\n" + boardP + "\n---------------" + f"\nWhite: {bot1.name()}, Eval: {evalW}")
 
             if board.isDraw():
                 break
+
 
             if (turn):
                 bot1.makeMove(board)
