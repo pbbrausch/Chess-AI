@@ -14,10 +14,12 @@ class Board:
         return list(self.board.legal_moves)
     
     def makeMove(self, move): #makes a move if legal ex "e4"
-        if (move in self.board.legal_moves):
+        if move in self.board.legal_moves:
             self.board.push(move)
         else:
-            print("Move not legal")
+            print("Move Illegal.")
+            return False
+        return True
 
     def undoMove(self): #undo's last move
         self.board.pop()

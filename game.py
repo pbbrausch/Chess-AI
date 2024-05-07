@@ -1,4 +1,5 @@
 from board import Board
+from player import Player
 from randomBot import RandomBot;
 from minimaxBot import MinimaxBot
 from time import sleep
@@ -7,62 +8,131 @@ import os
 from evaluate import evaluate
 
 def main():
-    bot1 = MinimaxBot(3)
-    bot2 = RandomBot()
+    bot1 = RandomBot()
+    #Minimax bot must be black
+    bot2 = MinimaxBot(3)
     
-    simulate(bot1, bot2, 1)
+    #simulate(bot1, bot2, 1)
+    playerVsBot(bot2)
+    #playerVsPlayer()
 
-def simulate(bot1, bot2, games):
-
+def playerVsBot(bot):
+    player = Player("Player")
     board = Board()
-
-    draws = 0
-    white = 0
-    black = 0
-
     turn = True
 
+    while not board.outcome():
+        printBoard(board, player, bot)
+
+        if turn:
+            print("Player Turn")
+            player.move(board)
+        else:
+            bot.move(board)
+            sleep(1)
+        
+        turn = not turn
+
+    
+    printBoard(board, player, bot) 
+
+    outcome = board.outcome()
+
+    if outcome.winner == chess.WHITE:
+        print("You win.")
+    elif outcome.winner == chess.BLACK:
+        print("Bot wins.")
+    else:
+        print("Draw.")
+
+
+def playerVsPlayer():
+    player1 = Player("Player 1")
+    player2 = Player("Player 2")
+    board = Board()
+    turn = True
+
+    while not board.outcome():
+        printBoard(board, player1, player2)
+
+        if turn:
+            print("Player 1 Turn")
+            player1.move(board)
+        else:
+            print("Player 2 Turn")
+            player2.move(board)
+        
+        turn = not turn
+
+    printBoard(board, player1, player2) 
+
+    outcome = board.outcome()
+
+    if outcome.winner == chess.WHITE:
+        print("You win.")
+    elif outcome.winner == chess.BLACK:
+        print("Bot wins.")
+    else:
+        print("Draw.")
+
+def simulate(white, black, games):
+
+    draws = 0
+    wWins = 0
+    bWins = 0
+
     # Set colors of bots to be able to evaluate the board
-    bot1.setColor(chess.WHITE)
-    bot2.setColor(chess.BLACK)
 
     for _ in range(games):
-        while True:
+        outcome = playGame(white, black)
 
-            evalB = evaluate(board, chess.BLACK)
-            evalW = evaluate(board, chess.WHITE)
-            boardP = board.toString()
+        if outcome.winner == chess.WHITE:
+            print("White wins.")
+            wWins += 1
+        elif outcome.winner == chess.BLACK:
+            print("Black wins.")
+            bWins += 1
+        else:
+            print("Draw.")
+            draws += 1
+        sleep(4)
+        
+    print("Simulated: " + str(games) + " | White: " + str(wWins) + " | Black: " + str(bWins) + " | Draws: " + str(draws))
 
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print(f"Black: {bot2.name()}, Eval: {evalB}\n" + "---------------\n" + boardP + "\n---------------" + f"\nWhite: {bot1.name()}, Eval: {evalW}")
+def playGame(white, black):
 
-            if board.isDraw():
-                break
+    board = Board()
+    turn = True
+    
+    while not board.outcome():
+        printBoard(board, white, black)
+        
+        if board.isDraw():
+            break
 
+        if turn:
+            white.move(board)
+        else:
+            black.move(board)
 
-            if (turn):
-                bot1.makeMove(board)
-            else:
-                bot2.makeMove(board)
-
-            turn = not turn
-            sleep(1)
+        turn = not turn
+        
+        sleep(0.2)
 
         outcome = board.outcome()
 
-        if outcome:
-            if outcome.winner == chess.WHITE:
-                white += 1
-            elif outcome.winner == chess.BLACK:
-                black += 1
-            else:
-                draws += 1
+    printBoard(board, white, black)
+    return outcome
 
-        board.reset()
-        
-    print("Simulated: " + str(games) + " | White: " + str(white) + " | Black: " + str(black) + " | Draws: " + str(draws))
 
-    
+def printBoard(board, white, black):
+    evalW = evaluate(board)
+    evalB = -1 * evalW
+    boardP = board.toString()
+
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(f"Black: {black.name()}, Eval: {evalB}\n" + "---------------\n" + boardP + "\n---------------" + f"\nWhite: {white.name()}, Eval: {evalW}")
+
 
 if __name__ == "__main__":
     main()

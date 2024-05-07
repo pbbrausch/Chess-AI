@@ -1,59 +1,57 @@
-import math, sys, time, chess
+import math
+import chess
 from evaluate import evaluate
 from random import choice
 
 class MinimaxBot():   
-    def __init__(self, maxDepth):
-        self.maxDepth = maxDepth
+    def __init__(self, depth):
+        self.depth = depth
 
-    def setColor(self, color):
-        self.color = color
-
-    def makeMove(self, board):
-        if self.color == None:
-            sys.exit("Need to set color.")
+    def move(self, board):
+        board.makeMove(self.minimaxMove(self.depth, board, False))
         
+    def minimaxMove(self, depth, board, isMax):
         maxEval = -math.inf
-        bestMove = None
+        bestMoves = []
 
         for move in board.getLegalMoves():
-            curr = self.minimax(board.copy(), move, 1, True, -math.inf, math.inf)
+            board.makeMove(move)
+            eval = self.minimax(depth-1, board, -math.inf, math.inf, isMax)
+            board.undoMove()
 
-            if curr > maxEval:
-                bestMove = move
-                maxEval = curr
+            if eval > maxEval:
+                bestMoves.clear()
+                bestMoves.append(move)
+                maxEval = eval
+            elif eval == maxEval:
+                bestMoves.append(move)
         
-        board.makeMove(bestMove)
-            
-    def minimax(self, board, move, depth, maxPlayer, alpha, beta):
-        board.makeMove(move)
+        return choice(bestMoves)
+        
+    def minimax(self, depth, board, alpha, beta, isMax):
+        if depth <= 0:
+            return -evaluate(board)
 
-        #Debug
-        #print(f"Depth: {depth}")
-        #print(board.toString())
-        #time.sleep(1)
-        
-        if depth == self.maxDepth or board.isDraw():
-            return evaluate(board, self.color)
-        
-        if maxPlayer:
+        if isMax:
             maxEval = -math.inf
-            for nextMove in board.getLegalMoves():
-                eval = self.minimax(board.copy(), nextMove, depth+1, False, alpha, beta)
-                maxEval = max(maxEval, eval)
-                alpha = max(alpha, eval)
+            for move in board.getLegalMoves():
+                board.makeMove(move)
+                maxEval = max(maxEval, self.minimax(depth-1, board, alpha, beta, False))
+                board.undoMove()
+                alpha = max(alpha, maxEval)
                 if beta <= alpha:
                     break
             return maxEval
         else:
             minEval = math.inf
-            for nextMove in board.getLegalMoves():
-                eval = self.minimax(board.copy(), nextMove, depth+1, True, alpha, beta)
-                minEval = min(minEval, eval)
-                beta = min(beta, eval)
+            for move in board.getLegalMoves():
+                board.makeMove(move)
+                minEval = min(minEval, self.minimax(depth-1, board, alpha, beta, True))
+                board.undoMove()
+                beta = min(beta, minEval)
                 if beta <= alpha:
                     break
             return minEval
         
     def name(self):
-        return f"Minimax Bot({self.maxDepth})"
+        return f"Minimax Bot({self.depth})"
