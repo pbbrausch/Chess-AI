@@ -1,4 +1,3 @@
-import math
 import chess
 from evaluate import evaluate
 from random import choice
@@ -11,12 +10,12 @@ class MinimaxBot():
         board.makeMove(self.minimaxMove(self.depth, board, False))
         
     def minimaxMove(self, depth, board, isMax):
-        maxEval = -math.inf
+        maxEval = -10000
         bestMoves = []
 
         for move in board.getLegalMoves():
             board.makeMove(move)
-            eval = self.minimax(depth-1, board, -math.inf, math.inf, isMax)
+            eval = self.minimax(depth-1, board, -10000, 10000, isMax)
             board.undoMove()
 
             if eval > maxEval:
@@ -33,7 +32,7 @@ class MinimaxBot():
             return -evaluate(board)
 
         if isMax:
-            maxEval = -math.inf
+            maxEval = -10000
             for move in board.getLegalMoves():
                 board.makeMove(move)
                 maxEval = max(maxEval, self.minimax(depth-1, board, alpha, beta, False))
@@ -43,7 +42,7 @@ class MinimaxBot():
                     break
             return maxEval
         else:
-            minEval = math.inf
+            minEval = 10000
             for move in board.getLegalMoves():
                 board.makeMove(move)
                 minEval = min(minEval, self.minimax(depth-1, board, alpha, beta, True))

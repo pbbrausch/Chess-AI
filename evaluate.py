@@ -1,4 +1,3 @@
-import math
 import chess
 
 # returns value of input board
@@ -12,9 +11,9 @@ def evaluate(board):
     if outcome:
         # check for checkmate
         if outcome.winner == chess.WHITE:
-            return math.inf
+            return 10000
         else:
-            return -math.inf
+            return -10000
 
     return value
 

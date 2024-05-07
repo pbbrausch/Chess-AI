@@ -1,4 +1,3 @@
-import math
 import chess
 import numpy as np
 
@@ -72,6 +71,23 @@ class Board:
     def toString(self):
         return str(self.board)
     
+    def printable(self):
+        string = ""
+        for i, l in enumerate(self.toString()):
+            if i % 16 == 0:
+                string += f"| {round(8 - (i/16))} "
+            string += l
+
+            if (i+2) % 16 == 0:
+                string += " |"
+
+        letters = ["h", "g", "f", "e", "d", "c", "b", "a"]
+        string += "\n" + '    '
+        for letter in reversed(letters):
+            string += f"{letter} "
+
+        return string
+    
     def toArray(self):
         return np.array(list(self.toString().replace(' ', '').replace('\n', '')))
     
@@ -82,7 +98,7 @@ class Board:
         return np.array(list(self.toString().replace(' ', '').replace('\n', '').replace('.', '')))
     
     def getPieceColor(self, letter):
-        if (letter.isupper()):
+        if letter.isupper():
             return chess.WHITE
         
         return chess.BLACK
