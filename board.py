@@ -72,17 +72,18 @@ class Board:
         return str(self.board)
     
     def printable(self):
-        string = ""
+        string = "   ---------------\n"
         for i, l in enumerate(self.toString()):
             if i % 16 == 0:
-                string += f"| {round(8 - (i/16))} "
+                string += f"{round(8 - (i/16))}| "
             string += l
 
             if (i+2) % 16 == 0:
                 string += " |"
 
+        string += "\n   ---------------"
         letters = ["h", "g", "f", "e", "d", "c", "b", "a"]
-        string += "\n" + '    '
+        string += "\n" + '   '
         for letter in reversed(letters):
             string += f"{letter} "
 

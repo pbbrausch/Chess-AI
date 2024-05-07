@@ -8,7 +8,7 @@ import os
 from evaluate import evaluate
 
 def main():
-    #bot1 = RandomBot()
+    bot1 = RandomBot()
     #Minimax bot must be black
     bot2 = MinimaxBot(3)
     
@@ -118,7 +118,7 @@ def playGame(white, black):
 
         turn = not turn
         
-        sleep(0.2)
+        sleep(1)
 
         outcome = board.outcome()
 
@@ -132,7 +132,7 @@ def printBoard(board, white, black):
     boardP = board.printable()
 
     os.system('cls' if os.name == 'nt' else 'clear')
-    print(f"Black: {black.name()}, Eval: {evalB}\n" + "    ---------------\n" + boardP + "\n    ---------------" + f"\nWhite: {white.name()}, Eval: {evalW}")
+    print(f"Black: {black.name()}, Eval: {evalB}\n" + boardP + f"\nWhite: {white.name()}, Eval: {evalW}")
 
 
 if __name__ == "__main__":
